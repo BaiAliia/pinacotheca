@@ -12,7 +12,7 @@ class Genre(models.Model):
     image = models.ImageField(blank=True, null=True, upload_to='genreimages/')
 
     def __str__(self):
-        return f'{self.name} {self.description}'
+        return f'{self.name}'
 
     def get_absolute_url(self):
         return f'/{self.slug}/'
@@ -22,6 +22,7 @@ class Style(models.Model):
     name = models.CharField(max_length=50, db_index=True, unique=True)
     slug = models.SlugField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='styleimages/')
 
     def __str__(self):
         return self.name
@@ -50,12 +51,16 @@ class Artist(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f'/{self.slug}/'
+
 
 class Gallery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True)
+    image = models.ImageField(blank=True, null=True, upload_to='galleryimages/')
 
     class Meta:
         verbose_name_plural = 'galleries'
@@ -63,14 +68,16 @@ class Gallery(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f'/{self.slug}/'
+
 
 class Painting(models.Model):
     title = models.CharField(max_length=255, db_index=True)
     slug = models.SlugField(max_length=255, unique=True)
-    artistName = models.CharField(max_length=255)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='painting')
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='paintings')
     description = models.TextField(blank=True, null=True)
-    completionYear = models.IntegerField( null=True)
+    completionYear = models.IntegerField(null=True)
     sizeX = models.DecimalField(max_digits=10, decimal_places=2)
     sizeY = models.DecimalField(max_digits=10, decimal_places=2)
     type = ArrayField(models.CharField(max_length=100), size=10, blank=True)
@@ -79,7 +86,6 @@ class Painting(models.Model):
     heightImg = models.IntegerField()
     image = models.ImageField(blank=True, null=True, upload_to='paintingimages/')
     gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name='painting_gallery')
-    galleryName = models.CharField(max_length=255, blank=True, null=True)
     popularityN = models.IntegerField(unique=True)
     genre = models.ManyToManyField(Genre)
     style = models.ManyToManyField(Style)
@@ -91,3 +97,5 @@ class Painting(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/{self.slug}/'
