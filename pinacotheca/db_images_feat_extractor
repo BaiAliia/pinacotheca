@@ -21,9 +21,12 @@ img_dir = "./"
 img_list = os.listdir(img_dir)
 
 for img in img_list:
-    img = preprocess(img)
-    img = Image.open(img)
+    img = Image.open(img_dir + img).convert('RGB')
+    img = preprocess(img) ##triggers the issue
+    img = img.unsqueeze(0)
+
     image_feat = model(img).detach().numpy()
-    # store the corresponding vector on DB
-
-
+   
+   ## store the corresponding vector on DB
+   ## print(len(image_feat))
+   ## print(image_feat)
