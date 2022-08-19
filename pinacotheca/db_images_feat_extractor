@@ -3,30 +3,34 @@ import os
 from PIL import Image
 from torchvision import transforms
 import torchvision
+import pandas as pd
+from tqdm import tqdm
+
 model = torchvision.models.vgg16(pretrained=True)
 model.classifier = model.classifier[:-1]
 
-
 preprocess = transforms.Compose([
     transforms.Resize(256),
-    transforms.CenterCrop(224),
+    transforms.CenterCrop(224), 
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
-
+]) 
 
 
 """ Extracting DB image features"""
-img_dir = "./"
+img_dir = "./images/"
 img_list = os.listdir(img_dir)
 
-for img in img_list:
-    img = Image.open(img_dir + img).convert('RGB')
+
+test=[]
+for img in tqdm(img_list[:10]):
+    img = Image.open(img_dir + img)
     img = preprocess(img) ##triggers the issue
     img = img.unsqueeze(0)
 
-    image_feat = model(img).detach().numpy()
-   
-   ## store the corresponding vector on DB
-   ## print(len(image_feat))
-   ## print(image_feat)
+    image_feat = model(img).detach().numpy() 
+    test.append(image_feat)
+ ##for now generates an excel and saves  first 10 for the teting purposes 
+print(test[0])
+df=pd.DataFrame.from_dict({'vectors':test})
+df.to_csv('result.csv')
