@@ -1,9 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
-from rest_framework import status, generics, permissions
+from rest_framework import status, generics, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import CustomUserCreateSerializer, UserVerificationSerializer, \
-    LogInSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, LogOutSerializer
+    LogInSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, LogOutSerializer, UserProfileSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from usersapp.models import UserAccount
@@ -163,3 +164,10 @@ class ResetPassword(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password was successfully reset'}, status=status.HTTP_200_OK)
+
+
+class UserProfileView(generics.RetrieveAPIView):
+    lookup_field = 'id'
+    queryset = get_user_model().objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = (permissions.AllowAny,)

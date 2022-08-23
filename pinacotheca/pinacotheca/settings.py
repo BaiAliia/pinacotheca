@@ -153,6 +153,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'usersapp.UserAccount'
+LOGIN_URL = 'api/auth/log-in/'
+LOGIN_REDIRECT_URL = 'api/auth/user-profile/<id>/'
+
 # gjoyiqltbexcowvq
 
 REST_FRAMEWORK = {
@@ -161,7 +164,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
 }
 
 

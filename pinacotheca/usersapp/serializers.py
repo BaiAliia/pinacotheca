@@ -1,5 +1,9 @@
+from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 from django.utils.encoding import force_str
 from rest_framework import serializers
+from rest_framework.settings import api_settings
+from pinax.models import Painting
 from usersapp.models import UserAccount
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
@@ -115,5 +119,42 @@ class ResetPasswordSerializer(serializers.Serializer):
             return user
         except Exception:
             raise AuthenticationFailed('The password reset link is invalid something else', 401)
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserAccount
+        fields = ('id', 'email', 'user_name', 'first_name')
+
+
+class FavouritePaintingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Painting
+        fields = ('id', 'image', 'title')
+        ordering = [id]
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user_favourites = serializers.SerializerMethodField('paginated_user_favourites')
+    num_favourites = serializers.IntegerField(source='favourites.count', read_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'user_name', 'first_name',
+                  'email', 'user_favourites', 'num_favourites')
+
+    def paginated_user_favourites(self, obj):
+        if obj.favourites.count()>0:
+            page_size = api_settings.PAGE_SIZE
+            paginator = Paginator(obj.favourites.all(), page_size)
+            page = self.context['request'].query_params.get('page') or 1
+
+            user_favourites = paginator.page(page)
+            serializer = FavouritePaintingSerializer(user_favourites, many=True)
+            return serializer.data
+        else:
+            return 'No Favourites'
 
 
