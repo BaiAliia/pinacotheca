@@ -1,0 +1,36 @@
+import numpy as np
+
+import torchvision
+from torchvision import transforms
+
+
+model = torchvision.models.vgg16(pretrained=True)
+model.classifier = model.classifier[:-1]
+
+preprocess = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+
+
+
+user_img = None  # this is an image read by PIL.Image.open
+
+user_img = preprocess(user_img)
+
+user_img_feat = model(user_img).detach().numpy()
+
+
+""" compare input image vector with all db vectors"""
+db_feats = []
+
+similarities = []
+for db_feat in db_feats:
+    similarity = 1 - np.linalg.norm(user_img_feat - db_feat)
+    similarities.append(similarity)
+
+most_similar_index = np.argmax(similarities)
+most_similar_feat = db_feats[most_similar_index]
