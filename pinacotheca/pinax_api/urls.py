@@ -18,7 +18,7 @@ urlpatterns =[
     path('add-comment/<int:painting_id>/', AddCommentView.as_view(), name='add-comment'),
     path('comment/<int:comment_id>/', ManageCommentsView.as_view(), name='manage-comment'),
     path('favourites/', UserFavoritesView.as_view(), name='favorites'),
-    path('favorite/<uuid:post_id>/', FavoriteView.as_view(), name='favorite'),
+    path('favorite/<int:post_id>/', FavoriteView.as_view(), name='favorite'),
     path('auth/', include('usersapp.urls', namespace='usersapp')),
     path('', include(router.urls)),
 
