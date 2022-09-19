@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -80,7 +79,7 @@ class Painting(models.Model):
     completionYear = models.IntegerField(null=True)
     sizeX = models.DecimalField(max_digits=10, decimal_places=2)
     sizeY = models.DecimalField(max_digits=10, decimal_places=2)
-    type = ArrayField(models.CharField(max_length=100), size=10, blank=True)
+    type = models.CharField(max_length=100)
     location = models.CharField(max_length=255, blank=True, null=True)
     widthImg = models.IntegerField()
     heightImg = models.IntegerField()
@@ -99,3 +98,12 @@ class Painting(models.Model):
 
     def get_absolute_url(self):
         return f'/{self.slug}/'
+
+
+def upload_path(instance,filename):
+    return'/'.join(['paintingimages',str(instance.painting), filename])
+
+
+class ImageModel(models.Model):
+    painting = models.CharField(blank=True, null=True, max_length=5000)
+    image = models.ImageField(blank=False, null=False, upload_to=upload_path)

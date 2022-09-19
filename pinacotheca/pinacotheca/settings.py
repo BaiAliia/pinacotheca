@@ -50,9 +50,13 @@ INSTALLED_APPS = [
 ]
 # to the frontend
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
+    "http://localhost:3000",
 ]
+CORS_ORIGIN_WHITELIST = [
 
+    "http://localhost:3000"
+
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,15 +93,14 @@ WSGI_APPLICATION = 'pinacotheca.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pina',
-        'USER': 'pinax',
-        'PASSWORD': 'pinax',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': os.path.join(PROJECT_DIR, 'pinaxa.db'),
+        }
+
 }
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
