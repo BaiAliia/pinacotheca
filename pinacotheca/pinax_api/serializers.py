@@ -1,12 +1,17 @@
+from abc import ABC
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.utils.datetime_safe import time
 from rest_framework import serializers
-from pinax.models import Painting, Artist, Gallery, Genre, Style
-from usersapp.models import UserAccount, Comment
-from django.contrib.postgres.fields import ArrayField
+import sys, os
 
+sys.path.append("./")
+
+from pinax.models import Artist, Gallery, Genre, Style,ImageModel, Painting
+from usersapp.models import UserAccount, Comment
+from pinacotheca.settings import MEDIA_URL
+from django.contrib.postgres.fields import ArrayField
 
 class CommentAuthorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,6 +26,16 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('painting', 'author', 'body', 'date_added')
         read_only_fields = ('author', 'painting', 'date_added')
+
+
+class ImageUploadSerializer(serializers.ModelSerializer):
+    painting = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = ImageModel
+        fields = ('image', 'painting')
+
+
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -119,6 +134,6 @@ class ArtistSerializer(serializers.ModelSerializer):
                   'dateOfBirth', 'dateOfDeath', 'birthDayString', 'deathDayString', 'country', 'paintings',
                   'num_paintings')
         model = Artist
-        depth = 1
+        depth = 0
 
 
